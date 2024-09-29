@@ -1,0 +1,55 @@
+---
+# tasks file for roles/mariadb/
+
+# - name: Register as user ec2-user and auto-subscribe to available content.
+#   community.general.redhat_subscription:
+#     state: present
+#     username: mariadb
+#     password: $6$nOZG0UFYdgzvhZYZ$rbv2aTmcURsqmWq7uK/DPGLn3/XonwXMBeZVJTMzRoFqWkwKVFbaKv117Uyg9bH1lTwFVHafPdJJFWvPJWwrL1
+#     auto_attach: true
+#   become: true
+
+
+- name: install mariadb
+  dnf:
+    name: "{{db_packages}}"
+    state: present
+
+- name: start mariadb service
+  service:
+    name: mariadb
+    state: started
+    enabled: yes
+
+
+- name: /etc/mysql directory exists
+  file:
+        path: /etc/mysql
+        state: directory
+        mode: '0755'
+
+- name: download mycnf configurations
+  get_url:
+    url: https://drive.google.com/uc?export=download&id=1QIeumZzk1_PL6pVf699ff8iurEnuwk7y
+    dest: /etc/my.cnf
+    owner: root
+    group: root
+
+- name: set the database password
+  mysql_user:
+    name: "{{db_username}}"
+    password: "{{db_password}}"
+    priv: '*.*:ALL'
+    state: present
+  register: user_check
+
+
+- name: mariadb restart
+  service:
+    name: mariadb
+    state: restarted
+
+
+- debug:
+    var: user_check
+  become: true

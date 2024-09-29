@@ -1,0 +1,6 @@
+---
+# defaults file for UserCreation
+
+username: mariadb
+Hashed_password: $6$TfBJs3umeZN1Dc4h$pFAvndQ0Hr7/gzuorf0qArGSrNnBLvIF.sADt67xA3oH5lsFR6Vh7/bYkOCcRSxcRdUo/a.DF8kEuwsw/PFZu1
+                  # hash the password using  openssl passwd -6 your_password

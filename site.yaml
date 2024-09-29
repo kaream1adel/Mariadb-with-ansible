@@ -1,0 +1,9 @@
+---
+- name: anisble playbook for mariadb
+  hosts: dbservers
+  remote_user: ec2-user
+  become: true
+  vars_files: roles/mariadb/vars/vault.yml
+  roles:
+   # - UserCreation
+    - mariadb

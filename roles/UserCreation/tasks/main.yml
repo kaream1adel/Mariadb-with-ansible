@@ -1,0 +1,41 @@
+---
+# tasks file for UserCreation
+
+
+- name: create user mariadb
+  user:
+    name: "{{username}}"
+    shell: /bin/bash      # Optional: Set the user's shell
+    state: present        # Ensure the user is present
+    createhome: yes       # Optional: Create home directory
+    groups: wheel            # Optional: Add to 'wheel' group if you want to grant all sudo privileges
+    password: "{{Hashed_password}}"
+  become: true
+  register: loll
+
+
+- name: Create sudoers file for mariadb
+  copy:
+        content: '{{username}} ALL=(ALL) NOPASSWD: ALL'
+        dest: /etc/sudoers.d/{{username}}
+        mode: '0440'
+        validate: 'visudo -cf %s'  # Validate the syntax
+  become: true
+
+- name: /home/{{username}}/.ssh/ directory exists
+  file:
+        path: /home/{{username}}/.ssh/
+        state: directory
+        mode: '0755'
+
+- name: copy public key to ~/.ssh/authorizedkeys file
+  ansible.builtin.copy:
+        src: '~/.ssh/authorized_keys'
+        dest:  '/home/{{username}}/.ssh/authorized_keys'
+        mode: '0644'
+  become: true
+
+- name: restart sshd service
+  service:
+    name: sshd
+    state: restarted

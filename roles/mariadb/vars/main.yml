@@ -1,0 +1,7 @@
+---
+# vars file for roles/mariadb/
+db_packages:
+  - mariadb-server
+  - python3-PyMySQL
+
+
